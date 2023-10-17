@@ -20,6 +20,11 @@ A template is provided:
   - Indicate if changes are major, minor, or patch changes.
 ```
 
+## 0.5.0.1
+ - [#43](https://github.com/haskell-github-trust/smtp-mail/pull/43) @spencerjanssen
+    - The `Bcc` field is stripped from the message before sending to the SMTP
+      server. This is to prevent leaking the BCC contents to recipients.
+
 ## 0.5.0.0
 
 - Adds support for OAuth authentication with a new function `sendMailWithLoginOAuthSTARTTLS`.
