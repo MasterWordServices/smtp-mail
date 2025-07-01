@@ -55,10 +55,17 @@
           127.0.0.1 acme.test
         '';
 
-        users.users.alice = {
-          isNormalUser = true;
-          home = "/home/alice";
-          createHome = true;
+        users.users = {
+          alice = {
+            isNormalUser = true;
+            home = "/home/alice";
+            createHome = true;
+          };
+          bob = {
+            isNormalUser = true;
+            home = "/home/bob";
+            createHome = true;
+          };
         };
 
         environment.systemPackages = [ pkgs.haskellPackages.integration-test ];
@@ -70,6 +77,9 @@
         machine.succeed("grep -l '^Subject: Test Plain$' /home/alice/Maildir/new/*")
         machine.succeed("grep -l '^Subject: Test TLS$' /home/alice/Maildir/new/*")
         machine.succeed("grep -l '^Subject: Test STARTTLS$' /home/alice/Maildir/new/*")
+        machine.succeed("grep -l '^Subject: Test Bcc$' /home/alice/Maildir/new/*")
+        machine.succeed("! grep 'bob@acme.test' /home/alice/Maildir/new/*")
+        machine.succeed("grep -l '^Subject: Test Bcc$' /home/bob/Maildir/new/*")
       '';
     };
   };
