@@ -28,6 +28,10 @@
           enableSubmissions = true;
           tlsTrustedAuthorities = "${certs.ca.cert}";
           config = {
+            home_mailbox = "Maildir/";
+            mydestination = "localhost, acme.test";
+            local_recipient_maps = "";
+            myhostname = "acme.test";
             smtpd_tls_chain_files = [
               certs."acme.test".key
               certs."acme.test".cert
@@ -51,12 +55,21 @@
           127.0.0.1 acme.test
         '';
 
+        users.users.alice = {
+          isNormalUser = true;
+          home = "/home/alice";
+          createHome = true;
+        };
+
         environment.systemPackages = [ pkgs.haskellPackages.integration-test ];
       };
 
       testScript = ''
         machine.wait_for_unit("postfix.service")
         machine.succeed("integration-test")
+        machine.succeed("grep -l '^Subject: Test Plain$' /home/alice/Maildir/new/*")
+        machine.succeed("grep -l '^Subject: Test TLS$' /home/alice/Maildir/new/*")
+        machine.succeed("grep -l '^Subject: Test STARTTLS$' /home/alice/Maildir/new/*")
       '';
     };
   };

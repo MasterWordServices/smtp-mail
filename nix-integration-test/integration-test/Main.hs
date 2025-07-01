@@ -9,17 +9,17 @@ import Test.Hspec.Expectations
 
 from       = Address Nothing "integration-test-smtp-mail@acme.test"
 to         = Address (Just "alice") "alice@acme.test"
-subject    = "Test Mail"
+subject    = "Test"
 body       = "Test Mail Body Part"
 html       = "<h1>This Test succeeded!</h1>"
 
-createMail = simpleMail to from subject body html []
+createMail label = simpleMail to from (subject <> " " <> label) body html []
 
 host = "acme.test"
 
-doPlainSmtp = createMail >>= sendMail host
-doTlsSmtp = createMail >>= sendMailTLS host
-doSTARTTLS = createMail >>= sendMailSTARTTLS host
+doPlainSmtp = createMail "Plain" >>= sendMail host
+doTlsSmtp = createMail "TLS" >>= sendMailTLS host
+doSTARTTLS = createMail "STARTTLS" >>= sendMailSTARTTLS host
 
 main :: IO ()
 main = hspec $ do
